@@ -2,7 +2,6 @@ import express from "express";
 import { getLoginToken } from "./login.js";
 import { url_get_station_list } from "../config/constants.js";
 import axios from "axios";
-import fetch from 'node-fetch';
 
 
 const routerex = express.Router();
@@ -45,13 +44,7 @@ routerex.post('/',(req,res) =>{
     });  
 });
 
-async function fetchSlist(token){
-    const res =  await fetch(url_get_station_list,{method: 'POST', body: JSON.stringify(),headers:{
-        "XSRF-TOKEN":token,
-    }});
-    
-    return await res.json();
-}
+
 
 export default routerex;
 

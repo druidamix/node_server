@@ -17,8 +17,6 @@ export async function getUser(user, password) {
 }
 
 
-
-
 export async function changePassword(user, password) {
     console.log(user);
     console.log(password);
@@ -31,7 +29,6 @@ export async function changePassword(user, password) {
     await pool.query("UPDATE users SET first_login =? where user=?",[1,user]);
 
     return true;
-
 }
 
 export default pool;
