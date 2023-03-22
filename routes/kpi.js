@@ -11,6 +11,13 @@ router.post('/',(req,res) =>{
     console.log('----');
     console.log(req.body.stationCodes);
    
+    res.status(200).send(
+        {
+          "day_power": 12.4,
+          "total_power": 590
+        }
+      );
+    return;
     
     getLoginToken().then(data =>{
         

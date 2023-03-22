@@ -17,15 +17,16 @@ router.post('/',(req,res) =>{
             //Check if user ever logged.
             if(rows[0].first_login == 0){
                 //reporting to create new password
-                res.status(205).send("Change Password");
+                res.status(205).send({"data": "change password"});
                 return;
             }
             
             //user logged correctly
-            res.status(200).send("User logged correctly");
+            res.status(200).send({"data": "user logged"});
             console.log("--user logged");
         }else{
-            res.status(400).send("User not found");
+            console.log('--user not found');
+            res.status(404).send("User not found");
         }
     });
 });

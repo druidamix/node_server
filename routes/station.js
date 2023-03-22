@@ -8,6 +8,10 @@ const routerex = express.Router();
 
 routerex.post('/',(req,res) =>{
     
+    res.status(200).send([{'stationName':'Station 1','stationAddr':'Plaça esglesia nº8','stationCode':'stcode1'},
+    {'stationName':'Station 2','stationAddr':'Prudenci Murillo nº2','stationCode':'stcode2'}]);
+    return;
+
     getLoginToken().then(data =>{
         
         let failCode = data.data['failCode'];
@@ -29,7 +33,8 @@ routerex.post('/',(req,res) =>{
                 failCode = r.data['failCode'];
                 if(failCode === 0){
                     console.log(JSON.stringify(r.data.data));
-                    res.status(200).send(JSON.stringify(r.data.data));
+                    res.status(200).send([{'stationName':'Station 1','stationAddr':'Plaça esglesia nº8'},
+                    {'stationName':'Station 2','stationAddr':'Prudenci Murillo nº2'}]);
                 }else{
                     console.log("--failcode: "+failCode+ ', statusCode: '+r.status);
                     console.log(JSON.stringify(r.data));
