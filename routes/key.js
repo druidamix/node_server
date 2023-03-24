@@ -6,7 +6,7 @@ const router = express.Router();
 
 
 router.post('/',(req,res) =>{
-    userController.storeNewUserHash(req.body.user).then(rows =>{
+    userController.storeNewUserToken(req.body.user).then(rows =>{
 
         res.status(200).send(rows.toString()); //secretkey sha256
     });

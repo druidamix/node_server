@@ -10,7 +10,7 @@ const routerex = express.Router();
 routerex.post('/',async (req,res) =>{
     
    
-    const isValidUser = await user.validateUser(req.body.user,req.body.lru);
+    const isValidUser = await user.validateRequest(req.body.user,req.body.lru);
     
     if(!isValidUser){
         res.status(401).send('Unauthorized');

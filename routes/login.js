@@ -12,38 +12,39 @@ const router = express.Router();
 //login
 router.post('/', async (req,res) =>{
 
-    const isValidUser = await user.validateUser(req.body.user,req.body.lru);
+    const isValidUser = await user.validateRequest(req.body.user,req.body.lru);
     
     if(!isValidUser){
         res.status(401).send('Unauthorized');
         return;
     }
 
-    user.getUser(req.body.user,req.body.pass).then(rows =>{
-        if(rows.length> 0){
+    const rows =  await user.getUser(req.body.user,req.body.pass);
+
+    if(rows.length> 0){
             
-            console.log('--Login');
-            //Check if user ever logged.
-            if(rows[0].first_login == 0){
-                //reporting to create new password
-                res.status(205).send({"data": "change password"});
-                return;
-            }
-            
-            //user logged correctly
-            res.status(200).send({"data": "user logged"});
-            console.log("--user logged");
-        }else{
-            console.log('--user not found');
-            res.status(404).send("User not found");
+        console.log('--Login');
+        //Check if user ever logged.
+        if(rows[0].first_login == 0){
+            //reporting to create new password
+            res.status(205).send({"data": "change password"});
+            return;
         }
-    });
+        
+        //user logged correctly
+        res.status(200).send({"data": "user logged"});
+        console.log("--user logged");
+    }else{
+        console.log('--user not found');
+        res.status(404).send("User not found");
+    }
+
 });
 
 //update password
 router.post('/changepassword',async (req,res)=>{
     
-    const isValidUser = await user.validateUser(req.body.user,req.body.lru);
+    const isValidUser = await user.validateRequest(req.body.user,req.body.lru);
     
     if(!isValidUser){
         res.status(401).send('Unauthorized');

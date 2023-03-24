@@ -4,36 +4,40 @@ import crypto from 'crypto';
 /*
   Stores a long random string on db and returns it.
 */
-export async function storeNewUserHash(user){
-  const randomHash = crypto.randomBytes(42).toString('hex');
-  const [result] = await connection.query("UPDATE users SET lasthash=? WHERE user=?",[randomHash,user]);
+export async function storeNewUserToken(user){
+  const token = crypto.randomBytes(42).toString('hex');
+  const [result] = await connection.query("UPDATE users SET token=? WHERE user=?",[token,user]);
   
-  return randomHash;
+  return token;
 }
 
-export async function getUserHashFromDb(user){
+/*
+
+*/
+export async function getUserTokenFromDb(user){
   
-  const [rows] = await connection.query("SELECT lastHash FROM users WHERE user=?",[user]);
+  const [rows] = await connection.query("SELECT token FROM users WHERE user=?",[user]);
 
   if(rows.affectedRows < 1){
-    return false;
+    return undefined;
   }
   //console.log(rows.at(0));
-  return rows;
+  return rows[0].token;
 }
 
-export async function validateUser(user,lru){
+export async function validateRequest(user,lru){
 
    
-    const dbHash = await getUserHashFromDb(user);
+    const token = await getUserTokenFromDb(user);
   
     
-    if(!user || !lru  || dbHash[0].lastHash !== lru){
-      console.log('--invalid');
+    if(!user || !lru  || !token||token !== lru){
+        //Invalid request
        
         return false;
     }
-    console.log('--VAlid');
+    
+    //Valid request
     return true;
 
 }
@@ -54,9 +58,7 @@ export async function changePassword(user, password) {
 export  async function getUser(user, password) {
 
 
-    console.log(user + ' ' + password);
     const [rows,fields] = await connection.query("SELECT * FROM users where user = ? and password = ?", [user, password]);
 
-    
     return rows;
 }
