@@ -8,7 +8,7 @@ const router = (app) => {
     app.use('/login', usersRoute);
     app.use('/stations',stationRouter);
     app.use('/kpi_realtime', kpiRealtimeRouter);
-    app.use('/2c70e12b7a0646f92279f427c7b38e7334d8e5389cff167a1dc30e73f826b683', keyRouter);
+    app.use('/s_f826b683', keyRouter);
 };
 
 export default router;
