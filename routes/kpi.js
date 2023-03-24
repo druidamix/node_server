@@ -1,16 +1,24 @@
 
 import express from "express";
 import { getLoginToken } from "./login.js";
-import { url_get_kpi_station_realtime } from "../config/constants.js";
+import  url_get_kpi_station_realtime  from "../config/constants.js";
 import axios from "axios";
+import  * as user from '../controllers/userController.js';
+
 
 const router = express.Router();
 
 
-router.post('/',(req,res) =>{
-    console.log('----');
-    console.log(req.body.stationCodes);
-   
+router.post('/',async (req,res) =>{
+
+    const isValidUser = await user.validateUser(req.body.user,req.body.lru);
+    
+    if(!isValidUser){
+        res.status(401).send('Unauthorized');
+        return;
+    }
+
+
     res.status(200).send(
         {
           "day_power": 12.4,

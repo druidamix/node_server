@@ -1,16 +1,25 @@
 import express from "express";
 import { url_login } from "../config/constants.js";
-import * as db from "../config/db.js"
 import axios from "axios";
+
+import  * as user from '../controllers/userController.js';
+
 
 
 
 const router = express.Router();
 
 //login
-router.post('/',(req,res) =>{
+router.post('/', async (req,res) =>{
+
+    const isValidUser = await user.validateUser(req.body.user,req.body.lru);
     
-    db.getUser(req.body.user,req.body.pass).then(rows =>{
+    if(!isValidUser){
+        res.status(401).send('Unauthorized');
+        return;
+    }
+
+    user.getUser(req.body.user,req.body.pass).then(rows =>{
         if(rows.length> 0){
             
             console.log('--Login');
@@ -32,9 +41,16 @@ router.post('/',(req,res) =>{
 });
 
 //update password
-router.post('/changepassword',(req,res)=>{
+router.post('/changepassword',async (req,res)=>{
     
-    db.changePassword(req.body.user,req.body.pass).then((result)=>{
+    const isValidUser = await user.validateUser(req.body.user,req.body.lru);
+    
+    if(!isValidUser){
+        res.status(401).send('Unauthorized');
+        return;
+    }
+
+    user.changePassword(req.body.user,req.body.pass).then((result)=>{
         if(result === true){
             res.status(200).send("Password changed");
             return;

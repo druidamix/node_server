@@ -1,13 +1,22 @@
 import express from "express";
 import { getLoginToken } from "./login.js";
 import { url_get_station_list } from "../config/constants.js";
+import * as user from '../controllers/userController.js';
 import axios from "axios";
 
 
 const routerex = express.Router();
 
-routerex.post('/',(req,res) =>{
+routerex.post('/',async (req,res) =>{
     
+   
+    const isValidUser = await user.validateUser(req.body.user,req.body.lru);
+    
+    if(!isValidUser){
+        res.status(401).send('Unauthorized');
+        return;
+    }
+
     res.status(200).send([{'stationName':'Station 1','stationAddr':'Plaça esglesia nº8','stationCode':'stcode1'},
     {'stationName':'Station 2','stationAddr':'Prudenci Murillo nº2','stationCode':'stcode2'}]);
     return;
