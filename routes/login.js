@@ -1,11 +1,7 @@
 import express from "express";
 import { url_login } from "../config/constants.js";
 import axios from "axios";
-
 import  * as user from '../controllers/userController.js';
-
-
-
 
 const router = express.Router();
 
@@ -19,7 +15,7 @@ router.post('/', async (req,res) =>{
         return;
     }
 
-    const rows =  await user.getUser(req.body.user,req.body.pass);
+    const rows =  await user.getUserFromDb(req.body.user,req.body.pass);
 
     if(rows.length> 0){
             
@@ -38,7 +34,6 @@ router.post('/', async (req,res) =>{
         console.log('--user not found');
         res.status(404).send("User not found");
     }
-
 });
 
 //update password
@@ -51,7 +46,7 @@ router.post('/changepassword',async (req,res)=>{
         return;
     }
 
-    user.changePassword(req.body.user,req.body.pass).then((result)=>{
+    user.changePassOnDb(req.body.user,req.body.pass).then((result)=>{
         if(result === true){
             res.status(200).send("Password changed");
             return;
@@ -60,9 +55,7 @@ router.post('/changepassword',async (req,res)=>{
     });
 });
 
-export  const getLoginToken  = async ()=> {
-    
-    
+export const getLoginToken  = async ()=> {
     
     const result =  await axios.post(url_login,{
         "userName":"marc_api",
@@ -74,8 +67,7 @@ export  const getLoginToken  = async ()=> {
     });
   
     return result;
-   
 };
 
 
-export  default router;
+export default router;

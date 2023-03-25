@@ -1,4 +1,3 @@
-
 import express from "express";
 import { getLoginToken } from "./login.js";
 import  url_get_kpi_station_realtime  from "../config/constants.js";
@@ -7,7 +6,6 @@ import  * as user from '../controllers/userController.js';
 
 
 const router = express.Router();
-
 
 router.post('/',async (req,res) =>{
 

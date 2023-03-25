@@ -4,10 +4,9 @@ import { url_get_station_list } from "../config/constants.js";
 import * as user from '../controllers/userController.js';
 import axios from "axios";
 
+const router = express.Router();
 
-const routerex = express.Router();
-
-routerex.post('/',async (req,res) =>{
+router.post('/',async (req,res) =>{
     
    
     const isValidUser = await user.validateRequest(req.body.user,req.body.lru);
@@ -60,5 +59,5 @@ routerex.post('/',async (req,res) =>{
 
 
 
-export default routerex;
+export default router;
 
