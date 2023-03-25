@@ -1,7 +1,7 @@
 import express from "express";
 import { getLoginToken } from "./login.js";
 import { url_get_station_list } from "../config/constants.js";
-import * as user from '../controllers/userController.js';
+import { validateRequest } from "../controllers/userController.js"; 
 import axios from "axios";
 
 const router = express.Router();
@@ -9,7 +9,7 @@ const router = express.Router();
 router.post('/',async (req,res) =>{
     
    
-    const isValidUser = await user.validateRequest(req.body.user,req.body.lru);
+    const isValidUser = await validateRequest(req.body.user,req.body.lru);
     
     if(!isValidUser){
         res.status(401).send('Unauthorized');

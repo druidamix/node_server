@@ -2,14 +2,14 @@ import express from "express";
 import { getLoginToken } from "./login.js";
 import  url_get_kpi_station_realtime  from "../config/constants.js";
 import axios from "axios";
-import  * as user from '../controllers/userController.js';
+import  {validateRequest} from '../controllers/userController.js';
 
 
 const router = express.Router();
 
 router.post('/',async (req,res) =>{
 
-    const isValidRequest = await user.validateRequest(req.body.user,req.body.lru);
+    const isValidRequest = await validateRequest(req.body.user,req.body.lru);
     
     if(!isValidRequest){
         res.status(401).send('Unauthorized');

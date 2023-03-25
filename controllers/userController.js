@@ -27,7 +27,6 @@ export async function validateRequest(user,lru){
   
   const token = await _getUserTokenFromDb(user);
   
-  
   if(!user || !lru  || !token||token !== lru){
     //Invalid request
     
