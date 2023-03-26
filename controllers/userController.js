@@ -8,7 +8,6 @@ export async function storeNewUserToken(user){
   const token = crypto.randomBytes(42).toString('hex');
   try {
     
-    
     const [result] = await connection.query("UPDATE users SET token=?,token_date=now(),token_date_string=now(),lastupdate=now() WHERE user=?",[token,user]);
     
     //if rows no affected returns null
@@ -34,7 +33,7 @@ export async function validateRequest(user,lru){
     var userDb = await _getUserTokenFromDb(user);
     
     //if empties and token is different than sent by request return false (invalid)
-    if(!user || !lru  || !userDb||userDb.token !== lru){
+    if( !userDb||userDb.token !== lru){
       //Invalid request
       return false;
     }
