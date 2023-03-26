@@ -7,11 +7,12 @@ Stores a long random string on db and returns it.
 export async function storeNewUserToken(user){
   const token = crypto.randomBytes(42).toString('hex');
   try {
-   
+    //const user = getUserFromDb
+    
     const [result] = await connection.query("UPDATE users SET token=?,token_date=now(),token_date_string=now(),lastupdate=now() WHERE user=?",[token,user]);
-  
-    if(result.affectedRows >0){
-      return token;
+    
+    if(result.affectedRows < 1){
+      return null;
     }
     
     return token;
@@ -28,34 +29,34 @@ Checks token user against request token
 export async function validateRequest(user,lru){
   
   try {
-    const [token,token_date ]= await _getUserTokenFromDb(user);
-  
- 
- 
-  if(!user || !lru  || !token||token !== lru){
-    //Invalid request
     
+    var userDb = await _getUserTokenFromDb(user);
+    
+    //console.log('token: '+ userDb.token + ', date: '+ userDb.token_date);
+    
+    if(!user || !lru  || !userDb||userDb.token !== lru){
+      //Invalid request
+      
+      return false;
+    }
+
+    const tokenDate = new Date(userDb.token_date);
+    //console.log(Math.abs((dat.getTime()- new Date().getTime())/1000) );
+    //If diff dates is greater than 3 seconds return invalidate
+    if(Math.abs((tokenDate.getTime()- new Date().getTime())/1000) > 5){
+      return false;
+    }
+    
+  } catch (error) {
+    console.log(error);
     return false;
   }
-
-  console.log(token_date);
-
-  const dat = new Date(token_date);
-  console.log(Math.abs((dat.getTime()- new Date().getTime())/1000) );
-  //If diff dates is greater than 3 seconds return invalidate
-  if(Math.abs((dat.getTime()- new Date().getTime())/1000) > 5){
-    return false;
-  }
-
-} catch (error) {
-  return false;
-}
-
+  
   //Valid request
   return true;
 }
 
-export async function changePassOnDb(user, password) {
+export async function changeUserPassOnDb(user, password) {
   
   const [rows] = await connection.query("UPDATE users SET password=?,lastupdate=now() where user=?", [password, user]);
   
@@ -63,16 +64,20 @@ export async function changePassOnDb(user, password) {
     return false;
   }
   
-  await pool.query("UPDATE users SET first_login =?,lastupdate=now() where user=?",[1,user]);
-  
+  // await pool.query("UPDATE users SET first_login =?,lastupdate=now() where user=?",[1,user]);
   return true;
 }
 
 export  async function getUserFromDb(user, password) {
   
   const [rows,fields] = await connection.query("SELECT * FROM users where user = ? and password = ?", [user, password]);
-  
-  return rows;
+  console.log('--entries : '+ rows);
+
+  if(rows.affectedRows <1){
+    return null;
+  }
+
+  return rows[0];
 }
 
 
@@ -82,12 +87,12 @@ async function _getUserTokenFromDb(user){
     const [rows] = await connection.query("SELECT token,token_date FROM users WHERE user=?",[user]);
     
     if(rows.affectedRows < 1){
-      return undefined;
+      return null;
     }
- 
-    //console.log(rows.at(0));
-    return [rows[0].token,rows[0].token_date];
+
+    return rows[0];
   } catch (error) {
+    console.log('--error:' + error);
     throw error;
   }
 }

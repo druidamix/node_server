@@ -19,8 +19,8 @@ router.post('/',async (req,res) =>{
 
     res.status(200).send(
         {
-          "day_power": 12.4,
-          "total_power": 590
+          "day_power": (Math.random()*10).toFixed(2),
+          "total_power": (Math.random()*500).toFixed(2)
         }
       );
     return;

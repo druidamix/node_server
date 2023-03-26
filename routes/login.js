@@ -1,27 +1,30 @@
 import express from "express";
 import { url_login } from "../config/constants.js";
 import axios from "axios";
-import  {validateRequest,getUserFromDb,changePassOnDb} from '../controllers/userController.js';
+import  {validateRequest,getUserFromDb,changeUserPassOnDb} from '../controllers/userController.js';
 
 const router = express.Router();
 
 //login
 router.post('/', async (req,res) =>{
-    console.log('--user: '+ req.body.user);
+    
+    //console.log('--user: '+ req.body.user);
     const isValidUser = await validateRequest(req.body.user,req.body.lru);
     
     if(!isValidUser){
+        console.log('--invalid user')
         res.status(401).send('Unauthorized');
         return;
     }
+   
 
-    const rows =  await getUserFromDb(req.body.user,req.body.pass);
+    var user =  await getUserFromDb(req.body.user,req.body.pass);
 
-    if(rows.length> 0){
+    if(user !=null){
             
         console.log('--Login');
         //Check if user ever logged.
-        if(rows[0].first_login == 0){
+        if(user.first_login == 0){
             //reporting to create new password
             res.status(205).send({"data": "change password"});
             return;
@@ -46,7 +49,7 @@ router.post('/changepassword',async (req,res)=>{
         return;
     }
 
-    changePassOnDb(req.body.user,req.body.pass).then((result)=>{
+    changeUserPassOnDb(req.body.user,req.body.pass).then((result)=>{
         if(result === true){
             res.status(200).send("Password changed");
             return;
