@@ -2,15 +2,16 @@ import connection from '../config/db.js';
 import crypto from 'crypto';
 
 /*
-Stores a long random string on db and returns it.
+  Updates user row with random bytes
 */
 export async function storeNewUserToken(user){
   const token = crypto.randomBytes(42).toString('hex');
   try {
-    //const user = getUserFromDb
+    
     
     const [result] = await connection.query("UPDATE users SET token=?,token_date=now(),token_date_string=now(),lastupdate=now() WHERE user=?",[token,user]);
     
+    //if rows no affected returns null
     if(result.affectedRows < 1){
       return null;
     }
@@ -24,7 +25,7 @@ export async function storeNewUserToken(user){
 
 
 /*
-Checks token user against request token
+  Checks token user against request token
 */
 export async function validateRequest(user,lru){
   
@@ -32,11 +33,9 @@ export async function validateRequest(user,lru){
     
     var userDb = await _getUserTokenFromDb(user);
     
-    //console.log('token: '+ userDb.token + ', date: '+ userDb.token_date);
-    
+    //if empties and token is different than sent by request return false (invalid)
     if(!user || !lru  || !userDb||userDb.token !== lru){
       //Invalid request
-      
       return false;
     }
 
@@ -68,7 +67,10 @@ export async function changeUserPassOnDb(user, password) {
   return true;
 }
 
-export  async function getUserFromDb(user, password) {
+/*
+  Gets user from db
+*/
+export async function getUserFromDb(user, password) {
   
   const [rows,fields] = await connection.query("SELECT * FROM users where user = ? and password = ?", [user, password]);
   console.log('--entries : '+ rows);
@@ -80,7 +82,9 @@ export  async function getUserFromDb(user, password) {
   return rows[0];
 }
 
-
+/*
+  Returs token from user
+*/
 async function _getUserTokenFromDb(user){
   
   try {

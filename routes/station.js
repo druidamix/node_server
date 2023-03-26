@@ -15,7 +15,7 @@ router.post('/',async (req,res) =>{
         res.status(401).send('Unauthorized');
         return;
     }
-
+    // demo data
     res.status(200).send([{'stationName':'Station 1','stationAddr':'Plaça esglesia nº8','stationCode':'stcode1'},
     {'stationName':'Station 2','stationAddr':'Prudenci Murillo nº2','stationCode':'stcode2'}]);
     return;

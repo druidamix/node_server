@@ -16,7 +16,7 @@ router.post('/',async (req,res) =>{
         return;
     }
 
-
+    //Demo data
     res.status(200).send(
         {
           "day_power": (Math.random()*10).toFixed(2),

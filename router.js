@@ -3,7 +3,7 @@ import stationRouter from './routes/station.js'
 import kpiRealtimeRouter from './routes/kpi.js'
 import tokenRouter from './routes/token.js';
 
-//* Here I defined the first endpoint
+
 const router = (app) => {
     app.use('/login', usersRoute);
     app.use('/stations',stationRouter);
