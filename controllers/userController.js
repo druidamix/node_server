@@ -27,8 +27,11 @@ Checks token user against request token
 */
 export async function validateRequest(user,lru){
   
-  const [token,token_date ]= await _getUserTokenFromDb(user);
+  try {
+    const [token,token_date ]= await _getUserTokenFromDb(user);
   
+ 
+ 
   if(!user || !lru  || !token||token !== lru){
     //Invalid request
     
@@ -43,6 +46,10 @@ export async function validateRequest(user,lru){
   if(Math.abs((dat.getTime()- new Date().getTime())/1000) > 5){
     return false;
   }
+
+} catch (error) {
+  return false;
+}
 
   //Valid request
   return true;
@@ -77,9 +84,10 @@ async function _getUserTokenFromDb(user){
     if(rows.affectedRows < 1){
       return undefined;
     }
+ 
     //console.log(rows.at(0));
     return [rows[0].token,rows[0].token_date];
   } catch (error) {
-    return undefined;
+    throw error;
   }
 }

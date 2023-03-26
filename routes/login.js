@@ -7,7 +7,7 @@ const router = express.Router();
 
 //login
 router.post('/', async (req,res) =>{
-
+    console.log('--user: '+ req.body.user);
     const isValidUser = await validateRequest(req.body.user,req.body.lru);
     
     if(!isValidUser){
