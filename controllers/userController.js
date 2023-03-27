@@ -76,7 +76,7 @@ export async function validateRequest(user,lru){
 
 export async function updateUserPasword(user, password) {
   
-  const [rows] = await connection.query("UPDATE users SET password=?,lastupdate=now() where user=?", [password, user]);
+  const [rows] = await connection.query("UPDATE users SET password=?,lastupdate=now(),first_login =? where user=?", [password, 1,user]);
   
   if (rows.affectedRows < 1) {
     return false;
