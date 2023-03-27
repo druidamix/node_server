@@ -1,7 +1,7 @@
 import express from "express";
 import { url_login } from "../config/constants.js";
 import axios from "axios";
-import  {validateRequest,getUserFromDb,changeUserPassOnDb} from '../controllers/userController.js';
+import  {validateRequest,getUserFromDb,updateUserPasword} from '../controllers/userController.js';
 
 const router = express.Router();
 
@@ -49,7 +49,7 @@ router.post('/changepassword',async (req,res)=>{
         return;
     }
 
-    changeUserPassOnDb(req.body.user,req.body.pass).then((result)=>{
+    updateUserPasword(req.body.user,req.body.pass).then((result)=>{
         if(result === true){
             res.status(200).send("Password changed");
             return;
