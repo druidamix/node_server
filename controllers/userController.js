@@ -1,6 +1,7 @@
 import connection from '../config/db.js';
 import crypto from 'crypto';
-import dayjs from 'dayjs';
+import { parseISO } from 'date-fns'
+import { differenceInSeconds} from 'date-fns';
 
 
 /*
@@ -58,16 +59,18 @@ export async function validateRequest(user,lru){
       //Invalid request
       return false;
     }
-
-    const tokenDate = dayjs(userDb.token_date);//new Date(userDb.token_date);
-    const currentDate = dayjs();
-    //console.log(tokenDate);
+    let dat = userDb.token_date;
+    console.log(dat.toDateString());
+    const tokenDate = dat;//dayjs(userDb.token_date);//new Date(userDb.token_date);
+    const currentDate = new Date();
+    console.log(tokenDate);
     //console.log('diff- :'+ currentDate.diff(tokenDate,'second'));
 
   
     //console.log(Math.abs((dat.getTime()- new Date().getTime())/1000) );
+    console.log(differenceInSeconds(tokenDate,currentDate));
     //If diff dates is greater than 3 seconds return invalidate
-    if(Math.abs(currentDate.diff(tokenDate,'second')) > 5){
+    if(Math.abs(differenceInSeconds(tokenDate,currentDate)) > 5){
       return false;
     }
     
@@ -77,7 +80,7 @@ export async function validateRequest(user,lru){
   }
   
   //Valid request
-  return true;
+  return false;
 }
 
 export async function updateUserPasword(user, password) {
