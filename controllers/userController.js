@@ -60,10 +60,11 @@ export async function validateRequest(user,lru){
       return false;
     }
     let dat = userDb.token_date;
-    console.log(dat.toDateString());
+    //console.log('---');
+    //console.log(dat);
     const tokenDate = dat;//dayjs(userDb.token_date);//new Date(userDb.token_date);
     const currentDate = new Date();
-    console.log(tokenDate);
+    //console.log(tokenDate);
     //console.log('diff- :'+ currentDate.diff(tokenDate,'second'));
 
   
@@ -80,7 +81,7 @@ export async function validateRequest(user,lru){
   }
   
   //Valid request
-  return false;
+  return true;
 }
 
 export async function updateUserPasword(user, password) {
