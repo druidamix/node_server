@@ -1,5 +1,6 @@
 import connection from '../config/db.js';
 import crypto from 'crypto';
+import dayjs from 'dayjs';
 
 
 /*
@@ -58,10 +59,15 @@ export async function validateRequest(user,lru){
       return false;
     }
 
-    const tokenDate = new Date(userDb.token_date);
+    const tokenDate = dayjs(userDb.token_date);//new Date(userDb.token_date);
+    const currentDate = dayjs();
+    //console.log(tokenDate);
+    //console.log('diff- :'+ currentDate.diff(tokenDate,'second'));
+
+  
     //console.log(Math.abs((dat.getTime()- new Date().getTime())/1000) );
     //If diff dates is greater than 3 seconds return invalidate
-    if(Math.abs((tokenDate.getTime()- new Date().getTime())/1000) > 5){
+    if(Math.abs(currentDate.diff(tokenDate,'second')) > 5){
       return false;
     }
     
