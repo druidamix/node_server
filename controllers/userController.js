@@ -24,7 +24,7 @@ async function _getUserTokenFromDb(user){
 /*
   Updates user row with random bytes
 */
-export async function storeNewUserToken(user){
+export async function updateUserToken(user){
   const token = crypto.randomBytes(42).toString('hex');
   try {
     
