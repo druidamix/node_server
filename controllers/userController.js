@@ -1,6 +1,26 @@
 import connection from '../config/db.js';
 import crypto from 'crypto';
 
+
+/*
+  Returs token from user
+*/
+async function _getUserTokenFromDb(user){
+  
+  try {
+    const [rows] = await connection.query("SELECT token,token_date FROM users WHERE user=?",[user]);
+    
+    if(rows.affectedRows < 1){
+      return null;
+    }
+
+    return rows[0];
+  } catch (error) {
+    console.log('--error:' + error);
+    throw error;
+  }
+}
+
 /*
   Updates user row with random bytes
 */
@@ -54,7 +74,7 @@ export async function validateRequest(user,lru){
   return true;
 }
 
-export async function changeUserPassOnDb(user, password) {
+export async function updateUserPasword(user, password) {
   
   const [rows] = await connection.query("UPDATE users SET password=?,lastupdate=now() where user=?", [password, user]);
   
@@ -62,7 +82,7 @@ export async function changeUserPassOnDb(user, password) {
     return false;
   }
   
-  // await pool.query("UPDATE users SET first_login =?,lastupdate=now() where user=?",[1,user]);
+
   return true;
 }
 
@@ -72,7 +92,6 @@ export async function changeUserPassOnDb(user, password) {
 export async function getUserFromDb(user, password) {
   
   const [rows,fields] = await connection.query("SELECT * FROM users where user = ? and password = ?", [user, password]);
-  console.log('--entries : '+ rows);
 
   if(rows.affectedRows <1){
     return null;
@@ -81,21 +100,4 @@ export async function getUserFromDb(user, password) {
   return rows[0];
 }
 
-/*
-  Returs token from user
-*/
-async function _getUserTokenFromDb(user){
-  
-  try {
-    const [rows] = await connection.query("SELECT token,token_date FROM users WHERE user=?",[user]);
-    
-    if(rows.affectedRows < 1){
-      return null;
-    }
 
-    return rows[0];
-  } catch (error) {
-    console.log('--error:' + error);
-    throw error;
-  }
-}
