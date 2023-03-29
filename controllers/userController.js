@@ -1,12 +1,12 @@
 import connection from '../config/db.js';
 import crypto from 'crypto';
-import { parseISO } from 'date-fns'
 import { differenceInSeconds} from 'date-fns';
 
-
-/*
-  Returs token from user
-*/
+/**
+ * Returns token as object
+ * @param {String} user Username
+ * @returns Returns object containing token and token_date
+ */
 async function _getUserTokenFromDb(user){
   
   try {
@@ -23,9 +23,11 @@ async function _getUserTokenFromDb(user){
   }
 }
 
-/*
-  Updates user row with random bytes
-*/
+/**
+ * Updates user token in database
+ * @param {String} user Username
+ * @returns {String} Return new token
+ */
 export async function updateUserToken(user){
   const token = crypto.randomBytes(42).toString('hex');
   try {
@@ -44,32 +46,31 @@ export async function updateUserToken(user){
   }
 }
 
-
-/*
-  Checks token user against request token
-*/
-export async function validateRequest(user,lru){
+/**
+ * Validates if token sent by last request is equal to saven in DB 
+ * @param {String} user  user
+ * @param {String} token  Token
+ * @returns {Boolean} Returns true if token is equal
+ */
+export async function validateRequest(user,token){
   
   try {
     
     var userDb = await _getUserTokenFromDb(user);
     
     //if empties and token is different than sent by request return false (invalid)
-    if( !userDb||userDb.token !== lru){
+    if( !userDb||userDb.token !== token){
       //Invalid request
       return false;
     }
-    let dat = userDb.token_date;
-    //console.log('---');
-    //console.log(dat);
-    const tokenDate = dat;//dayjs(userDb.token_date);//new Date(userDb.token_date);
+
+
+    const tokenDate = userDb.token_date;
     const currentDate = new Date();
-    //console.log(tokenDate);
-    //console.log('diff- :'+ currentDate.diff(tokenDate,'second'));
 
   
-    //console.log(Math.abs((dat.getTime()- new Date().getTime())/1000) );
-    console.log(differenceInSeconds(tokenDate,currentDate));
+    //console.log(differenceInSeconds(tokenDate,currentDate));
+
     //If diff dates is greater than 3 seconds return invalidate
     if(Math.abs(differenceInSeconds(tokenDate,currentDate)) > 5){
       return false;
@@ -84,6 +85,12 @@ export async function validateRequest(user,lru){
   return true;
 }
 
+/**
+ * Updates user password along first_login 
+ * @param {String} user Username
+ * @param {String} password Password
+ * @returns {Boolean} Returns true if updated correctly
+ */
 export async function updateUserPasword(user, password) {
   
   const [rows] = await connection.query("UPDATE users SET password=?,lastupdate=now(),first_login =? where user=?", [password, 1,user]);
@@ -92,13 +99,15 @@ export async function updateUserPasword(user, password) {
     return false;
   }
   
-
   return true;
 }
 
-/*
-  Gets user from db
-*/
+/**
+ * Get user from DB
+ * @param  {String} user Username
+ * @param  {String} password  Password
+ * @return {Object?}    Returns user or null if not found
+ */
 export async function getUserFromDb(user, password) {
   
   const [rows,fields] = await connection.query("SELECT * FROM users where user = ? and password = ?", [user, password]);

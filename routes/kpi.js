@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.post('/',async (req,res) =>{
 
-    const isValidRequest = await validateRequest(req.body.user,req.body.lru);
+    const isValidRequest = validateRequest(req.body.user, req.body.lru);
     
     if(!isValidRequest){
         res.status(401).send('Unauthorized');
