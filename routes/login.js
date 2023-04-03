@@ -2,14 +2,13 @@ import express from "express";
 import { url_login } from "../config/constants.js";
 import axios from "axios";
 import  {getUserFromDb,updateUserPasword} from '../controllers/userController.js';
+import { authenticateTokenMiddelWare } from "../controllers/authController.js";
 
 const router = express.Router();
 
 //login
 router.post('/', async (req,res) =>{
  
-
-
     var user =  await getUserFromDb(req.body.user,req.body.pass);
 
     if(user !=null){
@@ -32,16 +31,14 @@ router.post('/', async (req,res) =>{
 });
 
 //update password
-router.post('/changepassword',async (req,res)=>{
+router.post('/updateRegister',authenticateTokenMiddelWare,async (req,res)=>{
     
-
-
     updateUserPasword(req.body.user,req.body.pass).then((result)=>{
         if(result === true){
-            res.status(200).send("Password changed");
+            res.status(200).send("Register updated");
             return;
         }
-        res.status(205).send("Error changing password");
+        res.status(205).send("Error updating register");
     });
 });
 
