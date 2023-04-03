@@ -1,16 +1,21 @@
 import express from "express";
-import {updateUserSecret} from '../controllers/authController.js'
+import {generateToken} from '../controllers/authController.js'
 
 
 const router = express.Router();
 
-router.post('/',(req,res) =>{
-    console.log('--entro token api')
-    updateUserSecret(req.body.user,req.body.password).then(token =>{
-        res.status(200).send(token.toString()); 
-    }).catch(err =>{
+
+
+router.post('/',async (req,res) =>{
+
+    try{
+    const token = await generateToken(req.body.user,req);
+  
+    res.status(200).send(token)
+    }catch (error){
         res.status(500).send("token Internal Error");
-    });
+    }
+ 
 });
 
 

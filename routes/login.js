@@ -1,22 +1,14 @@
 import express from "express";
 import { url_login } from "../config/constants.js";
 import axios from "axios";
-import  {validateRequest,getUserFromDb,updateUserPasword} from '../controllers/userController.js';
+import  {getUserFromDb,updateUserPasword} from '../controllers/userController.js';
 
 const router = express.Router();
 
 //login
 router.post('/', async (req,res) =>{
  
-    //console.log(req);
-    const isValidUser = validateRequest(req.body.user, req.body.lru);
-    
-    if(!isValidUser){
-        console.log('--invalid user')
-        res.status(401).send('Unauthorized');
-        return;
-    }
-   
+
 
     var user =  await getUserFromDb(req.body.user,req.body.pass);
 
@@ -42,12 +34,7 @@ router.post('/', async (req,res) =>{
 //update password
 router.post('/changepassword',async (req,res)=>{
     
-    const isValidUser = await validateRequest(req.body.user,req.body.lru);
-    
-    if(!isValidUser){
-        res.status(401).send('Unauthorized');
-        return;
-    }
+
 
     updateUserPasword(req.body.user,req.body.pass).then((result)=>{
         if(result === true){

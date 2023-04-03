@@ -2,19 +2,12 @@ import express from "express";
 import { getLoginToken } from "./login.js";
 import  url_get_kpi_station_realtime  from "../config/constants.js";
 import axios from "axios";
-import  {validateRequest} from '../controllers/userController.js';
 
 
 const router = express.Router();
 
 router.post('/',async (req,res) =>{
 
-    const isValidRequest = validateRequest(req.body.user, req.body.lru);
-    
-    if(!isValidRequest){
-        res.status(401).send('Unauthorized');
-        return;
-    }
 
     //Demo data
     res.status(200).send(
@@ -33,7 +26,6 @@ router.post('/',async (req,res) =>{
             
             let token = data.headers['xsrf-token'];
             
-            console.log(token);
             
             axios.post(url_get_kpi_station_realtime,{"stationCodes": req.body.stationCodes},{
                 headers:{

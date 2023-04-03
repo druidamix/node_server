@@ -1,20 +1,13 @@
 import express from "express";
 import { getLoginToken } from "./login.js";
 import { url_get_station_list } from "../config/constants.js";
-import { validateRequest } from "../controllers/userController.js"; 
 import axios from "axios";
 
 const router = express.Router();
 
 router.post('/',async (req,res) =>{
     
-   
-    const isValidUser = validateRequest(req.body.user, req.body.lru);
-    console.log(isValidUser);
-    if(!isValidUser){
-        res.status(401).send('Unauthorized');
-        return;
-    }
+
     // demo data
     res.status(200).send([{'stationName':'Station 1','stationAddr':'Plaça esglesia nº8','stationCode':'stcode1'},
     {'stationName':'Station 2','stationAddr':'Prudenci Murillo nº2','stationCode':'stcode2'}]);
@@ -29,7 +22,6 @@ router.post('/',async (req,res) =>{
             
             let token = data.headers['xsrf-token'];
             
-            console.log(token);
             
             axios.post(url_get_station_list,{},{
                 headers:{

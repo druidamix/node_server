@@ -6,45 +6,6 @@ import {updateUserSecret,getUserSecret} from './authController.js'
 
 
 /**
- * Validates if token sent by last request is equal to saven in DB 
- * @param {String} user  user
- * @param {String} token  Token
- * @returns {Boolean} Returns true if token is equal
- */
-export async function validateRequest(user,token){
-  
-  try {
-    
-    var userDb = await getUserSecret(user);
-    
-    //if empties and token is different than sent by request return false (invalid)
-    if( !userDb||userDb.token !== token){
-      //Invalid request
-      return false;
-    }
-
-
-    const tokenDate = userDb.token_date;
-    const currentDate = new Date();
-
-  
-    //console.log(differenceInSeconds(tokenDate,currentDate));
-
-    //If diff dates is greater than 3 seconds return invalidate
-    if(Math.abs(differenceInSeconds(tokenDate,currentDate)) > 5){
-      return false;
-    }
-    
-  } catch (error) {
-    console.log(error);
-    return false;
-  }
-  
-  //Valid request
-  return true;
-}
-
-/**
  * Updates user password along first_login 
  * @param {String} user Username
  * @param {String} password Password
