@@ -8,21 +8,7 @@ const router = express.Router();
 
 //login
 router.post('/', async (req,res) =>{
-<<<<<<< HEAD
  
-=======
-    
-    console.log(req);
-    const isValidUser = validateRequest(req.body.user, req.body.lru);
-    
-    if(!isValidUser){
-        console.log('--invalid user')
-        res.status(401).send('Unauthorized');
-        return;
-    }
-   
-
->>>>>>> 1371f9ef1800c9a62287e14e8e58a295e6f7c8eb
     var user =  await getUserFromDb(req.body.user,req.body.pass);
 
     if(user !=null){
