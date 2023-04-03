@@ -28,19 +28,22 @@ async function _getUserTokenFromDb(user){
  * @param {String} user Username
  * @returns {String} Return new token
  */
-export async function updateUserToken(user){
-  const token = crypto.randomBytes(42).toString('hex');
+export async function updateUserSecret(user){
+  const token =  crypto.randomBytes(2048).toString('hex')
+  console.log('user -- : '+ user);
   try {
     
     const [result] = await connection.query("UPDATE users SET token=?,token_date=now(),token_date_string=now(),lastupdate=now() WHERE user=?",[token,user]);
     
     //if rows no affected returns null
     if(result.affectedRows < 1){
+      console.log('0 affected rows');
       return null;
     }
     
     return token;
   } catch (error) {
+    console.log('Errorrrrrr');
     console.log(error);
     throw error;
   }
@@ -56,7 +59,7 @@ export async function validateRequest(user,token){
   
   try {
     
-    var userDb = await _getUserTokenFromDb(user);
+    var userDb = await getUserSecret(user);
     
     //if empties and token is different than sent by request return false (invalid)
     if( !userDb||userDb.token !== token){
@@ -110,7 +113,7 @@ export async function updateUserPasword(user, password) {
  */
 export async function getUserFromDb(user, password) {
   
-  const [rows,fields] = await connection.query("SELECT * FROM users where user = ? and password = ?", [user, password]);
+  const [rows] = await connection.query("SELECT * FROM users where user = ? and password = ?", [user, password]);
 
   if(rows.affectedRows <1){
     return null;
