@@ -7,12 +7,13 @@ const router = express.Router();
 
 router.post('/',async (req,res) =>{
     
-
     // demo data
-    res.status(200).send([{'stationName':'Station 1','stationAddr':'Plaça esglesia nº8','stationCode':'stcode1'},
-    {'stationName':'Station 2','stationAddr':'Prudenci Murillo nº2','stationCode':'stcode2'}]);
+    res.status(200).send([
+        {'stationName':'Station 1','stationAddr':'Plaça esglesia nº8','stationCode':'stcode1'},
+        {'stationName':'Station 2','stationAddr':'Prudenci Murillo nº2','stationCode':'stcode2'}
+    ]);
     return;
-
+    
     getLoginToken().then(data =>{
         
         let failCode = data.data['failCode'];
@@ -45,7 +46,7 @@ router.post('/',async (req,res) =>{
             console.log("--failcode: "+failCode);
             res.status(400).send("failcode: "+failCode);
         } 
-    
+        
     });  
 });
 

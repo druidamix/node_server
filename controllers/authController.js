@@ -1,7 +1,7 @@
 import connection from '../config/db.js'
 import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
-
+const { sign, verify,TokenExpiredError } = jwt;
 /**
 * Returns token as object
 * @param {String} user Username
@@ -27,7 +27,7 @@ export async function getUserSecret(user){
 /**
 * Updates user token in database
 * @param {String} user Username
-* @returns {String} Return new token
+* @returns {Promise<String>} Return new token
 */
 export async function updateUserSecret(user){
   const token =  crypto.randomBytes(2048).toString('hex')
@@ -52,43 +52,44 @@ export async function updateUserSecret(user){
 }
 
 
-export async function authenticateToken(req, res, next) {
+export async function authenticateTokenMiddelWare(req, res, next) {
   const token = req.headers['authorization']
   const user = req.body.user;
 
   
   const secret = await getUserSecret(user)
-  
+ 
   if (token == null){ 
     console.log('unauthorized');
     return res.status(401).send('Unauthorized');
   }
-  jwt.verify(token, secret,function (err, user ){
+  
+  try {
     
-    
-    if (err){ 
-      console.log(err);
-      return res.sendStatus(403)
+    verify(token, secret);
+
+    next();
+  } catch (err) {
+    console.log(err);
+    if (err instanceof TokenExpiredError) {
+      return res.sendStatus(401);
     }
-    req.user = user
-    
-    next()
-  })
+    return res.sendStatus(500);
+  } 
 }
 
 
 export async function generateToken(user){
 
   let jwtSecretKey = await updateUserSecret(user);
-  
+
   let data = {
     time: Date(),
     userId: 12,
-    expiresIn: 60*3
-  }
+    
+  }  
   
-  const token = jwt.sign(data, jwtSecretKey);
-
+  const token = sign(data, jwtSecretKey,{expiresIn: '15s'});
   
   return token
   
