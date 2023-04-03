@@ -31,7 +31,7 @@ router.post('/', async (req,res) =>{
 });
 
 //update password
-router.post('/updateRegister',authenticateTokenMiddelWare,async (req,res)=>{
+router.post('/update_register',authenticateTokenMiddelWare,async (req,res)=>{
     
     updateUserPasword(req.body.user,req.body.pass).then((result)=>{
         if(result === true){

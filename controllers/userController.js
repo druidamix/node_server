@@ -1,6 +1,4 @@
 import connection from '../config/db.js';
-import { differenceInSeconds} from 'date-fns';
-import {updateUserSecret,getUserSecret} from './authController.js'
 
 
 
