@@ -23,25 +23,40 @@ export async function getUserSecret(user){
   }
 }
 
+/**
+ * Stores on db bearer token
+ * @param {String} user User
+ * @returns Returns bearer token.
+ */
+export async function generateLoginToken(user){
+  const token =  crypto.randomBytes(250).toString('hex');
+  
+  try {
+      const [result ] = await connection.query("UPDATE users SET bearer_token = ? WHERE user = ?",[token,user]);
+      return token;
+  
+  } catch (error) {
+    throw error;
+  }
+}
 
 /**
 * Updates user token in database
 * @param {String} user Username
 * @returns {Promise<String>} Return new token
 */
-export async function updateUserSecret(user){
+export async function updateUserSecret(user,bearer){
   const token =  crypto.randomBytes(2048).toString('hex')
   
   try {
     
-    const [result] = await connection.query("UPDATE users SET token=?,token_date=now(),token_date_string=now(),lastupdate=now() WHERE user=?",[token,user]);
+    const [result] = await connection.query("UPDATE users SET token=?,token_date=now(),token_date_string=now(),lastupdate=now() WHERE user=? and bearer_token = ?",[token,user, bearer]);
     
     //if rows no affected returns null
     if(result.affectedRows < 1){
       console.log('0 affected rows');
       return null;
     }
-    
     
     return token;
   } catch (error) {
@@ -55,7 +70,6 @@ export async function updateUserSecret(user){
 export async function authenticateTokenMiddelWare(req, res, next) {
   const token = req.headers['authorization']
   const user = req.body.user;
-
   
   const secret = await getUserSecret(user)
  
@@ -78,20 +92,22 @@ export async function authenticateTokenMiddelWare(req, res, next) {
   } 
 }
 
+/**
+ * 
+ * @param {String} user User
+ * @returns Signed token
+ */
+export async function generateToken(user,bearer){
 
-export async function generateToken(user){
-
-  let jwtSecretKey = await updateUserSecret(user);
+  let jwtSecretKey = await updateUserSecret(user,bearer);
 
   let data = {
     time: Date(),
     userId: 12,
-    
   }  
   
   const token = sign(data, jwtSecretKey,{expiresIn: '15s'});
   
   return token
-  
 }
 

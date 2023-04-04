@@ -7,9 +7,12 @@ const router = express.Router();
 
 
 router.post('/',async (req,res) =>{
-    
+
     try{
-        const token = await generateToken(req.body.user);
+        if(!req.headers.bearer){
+            throw Error('Bearer not found');
+        }
+        const token = await generateToken(req.headers.user,req.headers.bearer);
         
         res.status(200).send(token)
     }catch (error){

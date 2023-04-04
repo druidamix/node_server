@@ -1,8 +1,8 @@
 import express from "express";
 import { url_login } from "../config/constants.js";
 import axios from "axios";
-import  {getUserFromDb,updateUserPasword} from '../controllers/userController.js';
-import { authenticateTokenMiddelWare } from "../controllers/authController.js";
+import { getUserFromDb,updateUserPasword } from '../controllers/userController.js';
+import { authenticateTokenMiddelWare ,generateLoginToken} from "../controllers/authController.js";
 
 const router = express.Router();
 
@@ -17,12 +17,14 @@ router.post('/', async (req,res) =>{
         //Check if user ever logged.
         if(user.first_login == 0){
             //reporting to create new password
-            res.status(205).send({"data": "change password"});
+            res.status(205).send({"data": "Register upgrade"});
             return;
         }
         
+        const token = await generateLoginToken(req.body.user);
+        console.log(token);
         //user logged correctly
-        res.status(200).send({"data": "user logged"});
+        res.status(200).send({"token": token});
         console.log("--user logged");
     }else{
         console.log('--user not found');
