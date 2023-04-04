@@ -17,7 +17,7 @@ router.post('/',async (req,res) =>{
         res.status(200).send(token)
     }catch (error){
         console.log('--error ' + error);
-        res.status(500).send("token Internal Error");
+        res.status(500).send("Internal Error");
     }
     
 });
