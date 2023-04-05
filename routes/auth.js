@@ -1,22 +1,19 @@
 import express from "express";
-import {generateToken} from '../controllers/authController.js'
-
+import {generateJwtToken} from '../controllers/authController.js'
 
 const router = express.Router();
-
-
 
 router.post('/',async (req,res) =>{
 
     try{
         if(!req.headers.bearer){
-            throw Error('Bearer not found');
+            throw Error('missing not found');
         }
-        const token = await generateToken(req.headers.user,req.headers.bearer);
+        const token = await generateJwtToken(req.headers.user,req.headers.bearer);
         
         res.status(200).send(token)
     }catch (error){
-        console.log('--error ' + error);
+        console.log('--Auth error:  ' + error);
         res.status(500).send("Internal Error");
     }
     
