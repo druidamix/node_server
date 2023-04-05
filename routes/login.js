@@ -12,19 +12,20 @@ router.post('/', async (req,res) =>{
     var user =  await getUserFromDb(req.body.user,req.body.pass);
 
     if(user !=null){
-            
-        console.log('--Login');
-        //Check if user ever logged.
-        if(user.first_login == 0){
-            //reporting to create new password
-            res.status(205).send({"data": "Register upgrade"});
-            return;
-        }
-        
+      
         const token = await generateLoginToken(req.body.user);
         console.log(token);
-        //user logged correctly
-        res.status(200).send({"token": token});
+
+        //Check if user ever logged.
+        if(user.first_login == 0){
+            console.log("-- 205, reset password: "+token)
+            //reporting to create new password
+            res.status(206).json({"bearer_token": token});
+            return;
+        }
+      
+        //user logged correctly. Returing a bearer token
+        res.status(200).send({"bearer_token": token});
         console.log("--user logged");
     }else{
         console.log('--user not found');
