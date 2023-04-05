@@ -14,6 +14,7 @@ router.post('/',async (req,res) =>{
     ]);
     return;
     
+    //Not used, since I don't have permission on huawei solar
     getLoginToken().then(data =>{
         
         let failCode = data.data['failCode'];
