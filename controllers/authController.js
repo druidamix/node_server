@@ -18,7 +18,7 @@ export async function getUserSecret(user){
     
     return rows[0].token;
   } catch (error) {
-    console.log('--error:' + error);
+    console.log('--getUserSecret error:' + error);
     throw error;
   }
 }
@@ -45,7 +45,7 @@ export async function generateLoginToken(user){
 * @param {String} user Username
 * @returns {Promise<String>} Return new token
 */
-export async function updateUserSecret(user,bearer){
+export async function updateUserToken(user,bearer){
   const token =  crypto.randomBytes(2048).toString('hex')
   
   try {
@@ -97,9 +97,9 @@ export async function authenticateTokenMiddelWare(req, res, next) {
  * @param {String} user User
  * @returns Signed token
  */
-export async function generateToken(user,bearer){
+export async function generateJwtToken(user,bearer){
 
-  let jwtSecretKey = await updateUserSecret(user,bearer);
+  let jwtSecretKey = await updateUserToken(user,bearer);
 
   let data = {
     time: Date(),
