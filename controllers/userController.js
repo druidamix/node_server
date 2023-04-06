@@ -26,9 +26,9 @@ export async function updateUserPasword(user, password) {
  * @param  {String} password  Password
  * @return {Object?}    Returns user or null if not found
  */
-export async function getUserFromDb(user, password) {
+export async function getUserFromDb(user) {
   
-  const [rows] = await connection.query("SELECT * FROM users where user = ? and password = ?", [user, password]);
+  const [rows] = await connection.query("SELECT * FROM users where user = ?", [user]);
 
   if(rows.affectedRows <1){
     return null;

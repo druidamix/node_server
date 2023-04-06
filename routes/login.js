@@ -2,30 +2,28 @@ import express from "express";
 import { url_login } from "../config/constants.js";
 import axios from "axios";
 import { getUserFromDb,updateUserPasword } from '../controllers/userController.js';
-import { authenticateTokenMiddelWare ,generateLoginToken} from "../controllers/authController.js";
+import { authenticateTokenMiddelWare ,generateRedundantToken} from "../controllers/authController.js";
+
 
 const router = express.Router();
 
 //login
 router.post('/', async (req,res) =>{
  
-    var user =  await getUserFromDb(req.body.user,req.body.pass);
+    var user =  await getUserFromDb(req.body.user);
 
     if(user !=null){
       
-        const token = await generateLoginToken(req.body.user);
-        console.log(token);
-
+        const token = await generateRedundantToken(req.body.user,req.body.pass);
         //Check if user ever logged.
         if(user.first_login == 0){
-            console.log("-- 205, reset password: "+token)
             //reporting to create new password
-            res.status(206).json({"bearer_token": token});
+            res.status(206).json({"redundant_token": token});
             return;
         }
       
-        //user logged correctly. Returing a bearer token
-        res.status(200).send({"bearer_token": token});
+        //user logged correctly. Returing a redundant token
+        res.status(200).send({"token": token});
         console.log("--user logged");
     }else{
         console.log('--user not found');

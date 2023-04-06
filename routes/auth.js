@@ -6,10 +6,10 @@ const router = express.Router();
 router.post('/',async (req,res) =>{
 
     try{
-        if(!req.headers.bearer){
+        if(!req.headers.redundant){
             throw Error('missing not found');
         }
-        const token = await generateJwtToken(req.headers.user,req.headers.bearer);
+        const token = await generateJwtToken(req.headers.user,req.headers.redundant);
         
         res.status(200).send(token)
     }catch (error){
