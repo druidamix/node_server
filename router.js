@@ -9,7 +9,7 @@ const router = (app) => {
     app.use('/login', usersRoute);
     app.use('/stations',authenticateTokenMiddelWare, stationRouter);
     app.use('/kpi_realtime', authenticateTokenMiddelWare, kpiRealtimeRouter);
-    app.use('/token', authRouter);
+    app.use('/refresh_token', authRouter);
     app.all('*',(req,res)=>{
         const err = new Error(`Requested URL ${req.path} not found. Who are you?`);
         res.status(404).send(err.message);
