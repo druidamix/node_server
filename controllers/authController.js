@@ -67,6 +67,7 @@ export async function updateUserToken(user, redundant_token) {
 
     return token;
   } catch (error) {
+    console.log("--UpdaintUserToken")
     console.log(error);
     throw error;
   }
@@ -85,11 +86,12 @@ export async function authenticateTokenMiddelWare(req, res, next) {
   }
 
   try {
-    console.log("--Recived token: " + token);
     verify(token, secret);
 
     next();
   } catch (err) {
+    console.log("--Error verifying token")
+
     console.log(err);
     if (err instanceof TokenExpiredError) {
       return res.sendStatus(401);
@@ -121,7 +123,6 @@ export async function generateJwtToken(user, redundant_token) {
     algorithm: "HS256",
   });
 
-  console.log("--token:" + token)
 
   return token
 }
