@@ -27,7 +27,7 @@ router.post('/', async (req,res) =>{
         console.log("--user logged");
     }else{
         console.log('--user not found');
-        res.status(404).send("User not found");
+        res.status(404).send("Not found");
     }
 });
 
@@ -39,7 +39,7 @@ router.post('/update_register',authenticateTokenMiddelWare,async (req,res)=>{
             res.status(200).send("Register updated");
             return;
         }
-        res.status(205).send("Error updating register");
+        res.status(205).send("Not found");
     });
 });
 
