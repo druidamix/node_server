@@ -2,6 +2,7 @@ import connection from '../config/db.js'
 import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
 import { getUserFromDb } from './userController.js'
+import { log } from 'console';
 
 const { sign, verify, TokenExpiredError } = jwt;
 /**
@@ -37,7 +38,7 @@ export async function generateRedundantToken(user, pass) {
     const [result] = await connection.query("UPDATE users SET redundant_token = ? WHERE user = ? and password = ?", [randomToken, user, pass]);
 
     if (result.affectedRows < 1) {
-      throw Error("User not found");
+      return null;
     }
 
     return randomToken;
@@ -52,7 +53,7 @@ export async function generateRedundantToken(user, pass) {
 * @param {String} user Username
 * @returns {Promise<String>} Return new token
 */
-export async function updateUserToken(user, redundant_token) {
+export async function updateJwtSecretKey(user, redundant_token) {
   const token = crypto.randomBytes(2048).toString('hex')
 
   try {
@@ -76,7 +77,7 @@ export async function updateUserToken(user, redundant_token) {
 
 export async function authenticateTokenMiddelWare(req, res, next) {
   const token = req.headers['authorization']
-  const user = req.body.user;
+  const user = req.headers['user'];
 
   const secret = await getUserSecret(user)
 
@@ -107,7 +108,7 @@ export async function authenticateTokenMiddelWare(req, res, next) {
  */
 export async function generateJwtToken(user, redundant_token) {
 
-  let jwtSecretKey = await updateUserToken(user, redundant_token);
+  let jwtSecretKey = await updateJwtSecretKey(user, redundant_token);
 
   if (!jwtSecretKey) {
     throw Error("Unathorized")

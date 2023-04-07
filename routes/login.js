@@ -9,12 +9,15 @@ const router = express.Router();
 
 //login
 router.post('/', async (req,res) =>{
- 
-    var user =  await getUserFromDb(req.body.user);
+    const _user = req.headers['user']
+    const _pass = req.headers['pass'];
+
+    req.header
+    var user =  await getUserFromDb(_user,_pass);
 
     if(user !=null){
       
-        const token = await generateRedundantToken(req.body.user,req.body.pass);
+        const token = await generateRedundantToken(_user,_pass);
         //Check if user ever logged.
         if(user.first_login == 0){
             //reporting to create new password
@@ -33,8 +36,10 @@ router.post('/', async (req,res) =>{
 
 //update password
 router.post('/update_register',authenticateTokenMiddelWare,async (req,res)=>{
-    
-    updateUserPasword(req.body.user,req.body.pass).then((result)=>{
+      const _user = req.headers['user']
+    const _pass = req.headers['pass'];
+
+    updateUserPasword(_user,_pass).then((result)=>{
         if(result === true){
             res.status(200).send("Register updated");
             return;
