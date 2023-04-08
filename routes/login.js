@@ -26,7 +26,7 @@ router.post('/', async (req,res) =>{
         }
       
         //user logged correctly. Returing a redundant token
-        res.status(200).send({"token": token});
+        res.status(200).send({"redundant_token": token});
         console.log("--user logged");
     }else{
         console.log('--user not found');

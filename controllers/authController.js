@@ -2,7 +2,6 @@ import connection from '../config/db.js'
 import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
 import { getUserFromDb } from './userController.js'
-import { log } from 'console';
 
 const { sign, verify, TokenExpiredError } = jwt;
 /**
