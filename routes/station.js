@@ -6,7 +6,7 @@ import axios from "axios";
 const router = express.Router();
 
 router.post('/',async (req,res) =>{
-    
+    console.log("--Entro stations")
     // demo data
     res.status(200).send([
         {'stationName':'Station 1','stationAddr':'Plaça esglesia nº8','stationCode':'stcode1'},

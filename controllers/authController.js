@@ -12,13 +12,16 @@ const { sign, verify, TokenExpiredError } = jwt;
 export async function getUserSecret(user) {
 
   try {
+    if(user){
     const [rows] = await connection.query("SELECT token,token_date FROM users WHERE user=?", [user]);
-
+    console.log(rows);
+    
     if (rows.affectedRows < 1) {
       return null;
     }
 
     return rows[0].token;
+  }
   } catch (error) {
     console.log('--getUserSecret error:' + error);
     throw error;
@@ -77,7 +80,6 @@ export async function updateJwtSecretKey(user, redundant_token) {
 export async function authenticateTokenMiddelWare(req, res, next) {
   const token = req.headers['authorization']
   const user = req.headers['user'];
-
   const secret = await getUserSecret(user)
 
   if (token == null) {

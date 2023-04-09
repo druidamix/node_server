@@ -10,14 +10,14 @@ import connection from '../config/db.js';
  * @returns {Boolean} Returns true if updated correctly
  */
 export async function updateUserPasword(user, password) {
-  
-  const [rows] = await connection.query("UPDATE users SET password=?,lastupdate=now(),first_login =? where user=?", [password, 1,user]);
-  
-  if (rows.affectedRows < 1) {
-    return false;
-  }
-  
-  return true;
+
+	const [rows] = await connection.query("UPDATE users SET password=?,lastupdate=now(),first_login =? where user=?", [password, 1, user]);
+
+	if (rows.affectedRows < 1) {
+		return false;
+	}
+
+	return true;
 }
 
 /**
@@ -26,15 +26,27 @@ export async function updateUserPasword(user, password) {
  * @param  {String} password  Password
  * @return {Object?}    Returns user or null if not found
  */
-export async function getUserFromDb(user,pass) {
-  
-  const [rows] = await connection.query("SELECT * FROM users where user = ? and password = ?", [user,pass]);
+export async function getUserFromDb(user, pass) {
 
-  if(rows.affectedRows <1){
-    return null;
-  }
+	const [rows] = await connection.query("SELECT * FROM users where user = ? and password = ?", [user, pass]);
 
-  return rows[0];
+	if (rows.affectedRows < 1) {
+		return null;
+	}
+
+	return rows[0];
+}
+/**
+ * Returns all users
+ * @returns users
+ */
+export async function getUsersFromDb() {
+	const [rows] = await connection.query("SELECT * FROM users");
+	if (rows.affectedRows < 1) {
+		throw Error()
+	}
+
+	return rows;
 }
 
 
