@@ -1,7 +1,7 @@
-import connection from '../config/db.js'
-import crypto from 'crypto'
-import jwt from 'jsonwebtoken'
-import { getUserFromDb } from './userController.js'
+import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
+import connection from '../config/db';
+import { getUserFromDb } from './userController';
 
 const { sign, verify, TokenExpiredError } = jwt;
 /**
@@ -10,22 +10,16 @@ const { sign, verify, TokenExpiredError } = jwt;
 * @returns Returns object containing token and token_date
 */
 export async function getUserSecret(user) {
+  if (user) {
+    const [rows] = await connection.query('SELECT token,token_date FROM users WHERE user=?', [user]);
 
-  try {
-    if(user){
-    const [rows] = await connection.query("SELECT token,token_date FROM users WHERE user=?", [user]);
-    console.log(rows);
-    
     if (rows.affectedRows < 1) {
       return null;
     }
 
     return rows[0].token;
   }
-  } catch (error) {
-    console.log('--getUserSecret error:' + error);
-    throw error;
-  }
+  return null;
 }
 
 /**
@@ -36,18 +30,13 @@ export async function getUserSecret(user) {
 export async function generateRedundantToken(user, pass) {
   const randomToken = crypto.randomBytes(250).toString('hex');
 
-  try {
-    const [result] = await connection.query("UPDATE users SET redundant_token = ? WHERE user = ? and password = ?", [randomToken, user, pass]);
+  const [result] = await connection.query('UPDATE users SET redundant_token = ? WHERE user = ? and password = ?', [randomToken, user, pass]);
 
-    if (result.affectedRows < 1) {
-      return null;
-    }
-
-    return randomToken;
-
-  } catch (error) {
-    throw error;
+  if (result.affectedRows < 1) {
+    return null;
   }
+
+  return randomToken;
 }
 
 /**
@@ -56,76 +45,60 @@ export async function generateRedundantToken(user, pass) {
 * @returns {Promise<String>} Return new token
 */
 export async function updateJwtSecretKey(user, redundant_token) {
-  const token = crypto.randomBytes(2048).toString('hex')
+  const token = crypto.randomBytes(2048).toString('hex');
 
-  try {
+  const [result] = await connection.query('UPDATE users SET token=?,token_date=now(),token_date_string=now(),lastupdate=now() WHERE user=? and redundant_token = ?', [token, user, redundant_token]);
 
-    const [result] = await connection.query("UPDATE users SET token=?,token_date=now(),token_date_string=now(),lastupdate=now() WHERE user=? and redundant_token = ?", [token, user, redundant_token]);
-
-    //if rows no affected returns null
-    if (result.affectedRows < 1) {
-      console.log('0 affected rows');
-      return null;
-    }
-
-    return token;
-  } catch (error) {
-    console.log("--UpdaintUserToken")
-    console.log(error);
-    throw error;
+  // if rows no affected returns null
+  if (result.affectedRows < 1) {
+    return null;
   }
+
+  return token;
 }
 
-
 export async function authenticateTokenMiddelWare(req, res, next) {
-  const token = req.headers['authorization']
+  const token = req.headers['authorization'];
   const user = req.headers['user'];
-  const secret = await getUserSecret(user)
+
+  const secret = await getUserSecret(user);
 
   if (token == null) {
-    console.log('unauthorized');
     return res.status(401).send('Unauthorized');
   }
 
   try {
     verify(token, secret);
-
     next();
   } catch (err) {
-    console.log("--Error verifying token")
-
-    console.log(err);
     if (err instanceof TokenExpiredError) {
       return res.sendStatus(401);
     }
     return res.sendStatus(500);
   }
+  return null;
 }
 
 /**
- * 
  * @param {String} user User
  * @returns Signed token
  */
 export async function generateJwtToken(user, redundant_token) {
-
-  let jwtSecretKey = await updateJwtSecretKey(user, redundant_token);
+  const jwtSecretKey = await updateJwtSecretKey(user, redundant_token);
 
   if (!jwtSecretKey) {
-    throw Error("Unathorized")
+    throw Error('Unathorized');
   }
 
   const userDb = getUserFromDb(user);
-  let data = {
+  const data = {
     time: Date(),
     userId: userDb.id,
-  }
+  };
   const token = sign(data, jwtSecretKey, {
     expiresIn: '15s',
-    algorithm: "HS256",
+    algorithm: 'HS256',
   });
 
-
-  return token
+  return token;
 }
-

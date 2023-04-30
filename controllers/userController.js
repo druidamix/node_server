@@ -1,8 +1,5 @@
 import connection from '../config/db.js';
 
-
-
-
 /**
  * Updates user password along first_login 
  * @param {String} user Username
@@ -11,13 +8,12 @@ import connection from '../config/db.js';
  */
 export async function updateUserPasword(user, password) {
 
-	const [rows] = await connection.query("UPDATE users SET password=?,lastupdate=now(),first_login =? where user=?", [password, 1, user]);
+  const [rows] = await connection.query("UPDATE users SET password=?,lastupdate=now(),first_login =? WHERE user=?", [password, 1, user]);
 
-	if (rows.affectedRows < 1) {
-		return false;
-	}
-
-	return true;
+  if (rows.affectedRows < 1) {
+    return false;
+  }
+  return true;
 }
 
 /**
@@ -28,25 +24,23 @@ export async function updateUserPasword(user, password) {
  */
 export async function getUserFromDb(user, pass) {
 
-	const [rows] = await connection.query("SELECT * FROM users where user = ? and password = ?", [user, pass]);
-
-	if (rows.affectedRows < 1) {
-		return null;
-	}
-
-	return rows[0];
+  const [rows] = await connection.query("SELECT * FROM users WHERE user = ? and password = ?", [user, pass]);
+  if (rows.affectedRows < 1) {
+    return null;
+  }
+  return rows[0];
 }
 /**
  * Returns all users
  * @returns users
  */
 export async function getUsersFromDb() {
-	const [rows] = await connection.query("SELECT * FROM users");
-	if (rows.affectedRows < 1) {
-		throw Error()
-	}
+  const [rows] = await connection.query("SELECT * FROM users");
+  if (rows.affectedRows < 1) {
+    throw Error()
+  }
 
-	return rows;
+  return rows;
 }
 
 
